@@ -2,6 +2,9 @@ import netscape.javascript.JSObject;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.sql.Connection;
@@ -13,6 +16,9 @@ import java.util.Optional;
 import java.util.Scanner;
 
 public class Numeritos {
+
+
+    private int lineasNuevas = 0;
 
 
     public void connect() {
@@ -38,11 +44,31 @@ public class Numeritos {
         }
     }
 
-    public Manga hMetadata(int numeritos) {
+    public boolean obtainLineas(String routa) {
+        BufferedReader reader;
+        try {
+            reader = new BufferedReader(new FileReader(routa));
+            String line = reader.readLine();
+            while (line != null) {
+                insert(hMetadata(line.trim()));
+                line = reader.readLine();
+            }
+            reader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        return true;
+
+    }
+
+
+    public Manga hMetadata(String numeritos) {
 
         try {
             Manga salida = new Manga();
-            URL url = new URL("https://nhentai.net/api/gallery/" + String.valueOf(numeritos));
+            URL url = new URL("https://nhentai.net/api/gallery/" + numeritos);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
             conn.connect();
@@ -94,7 +120,7 @@ public class Numeritos {
                     if (arr.getJSONObject(i).getString("type").equals("parody")) {
                         salida.setParodia(arr.getJSONObject(i).getString("name"));
                         break;
-                    }else {
+                    } else {
                         salida.setParodia("original");
                     }
                 }
@@ -130,13 +156,17 @@ public class Numeritos {
             e.printStackTrace();
             return null;
         }
+    }
+
+
+    public void  insert(Manga manga) {
+        lineasNuevas++;
+
 
 
     }
 
-
-    public void insert(Manga manga) {
-
+    public int getLineasNuevas() {
+        return lineasNuevas;
     }
-
 }
