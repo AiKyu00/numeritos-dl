@@ -6,7 +6,7 @@ public class Manga {
     private String parodia;
     private String personaje;
     private String titulo;
-    private float exp;
+    private double exp;
     private int media;
 
     public Manga() {
@@ -68,11 +68,11 @@ public class Manga {
         this.titulo = titulo;
     }
 
-    public float getExp() {
+    public double getExp() {
         return exp;
     }
 
-    public void setExp(float exp) {
+    public void setExp(double exp) {
         this.exp = exp;
     }
 

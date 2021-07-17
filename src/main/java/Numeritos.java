@@ -1,9 +1,12 @@
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.sql.*;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -12,7 +15,7 @@ public class Numeritos {
 
   private int lineasNuevas = 0;
   private Connection conn = null;
-  private Map<String, Double> map = new HashMap<String, Double>();
+  private Map<String, Double> xpValues = new HashMap<String, Double>();
 
   public void connect() {
     try {
@@ -135,18 +138,19 @@ public class Numeritos {
         String[] parts = tags.split("|");
         int i = 0;
         double xpTotal, xpPagina;
-        double xp;
+       // double xp;
         xpPagina = 10;
         xpTotal = xpPagina * salida.getPaginas();
-        /*
+
         while (i < parts.length) {
           if (this.xpValues.containsKey(parts[i])) {
             xpTotal += 100 * this.xpValues.get(parts[i]);
           } else {
             xpTotal += 100 * 1;
           }
+          i++;
         }
-*/
+/*
         while (i < parts.length) {
           xp = this.xpValues.get(parts[i]);
           if (xp == null) {
@@ -154,7 +158,9 @@ public class Numeritos {
           }
           xpTotal += 100 * xp;
         }
-        salida.setXP(xpTotal);
+
+ */
+        salida.setExp((float) xpTotal);
 
         //Obtengo el media_id
         salida.setMedia(Integer.parseInt(object.getString("media_id")));
@@ -175,15 +181,14 @@ public class Numeritos {
     BufferedReader br = null;
     String[] parts;
     try {
-      archivo = new File("C:\\Experiencia.txt");
+      archivo = new File("C:\\Users\\Sergio Malagon\\Documents\\Experiencia.txt");
       fr = new FileReader(archivo);
       br = new BufferedReader(fr);
 
-      linea = b.readLine();
+      linea = br.readLine();
       while (linea != null) {
         parts = linea.split(",");
-        map.put(parts[0], Double.parseDouble(parts[1]));
-        linea = b.readLine();
+        xpValues.put(parts[0], Double.parseDouble(parts[1]));
       }
     } catch (Exception e) {
       e.printStackTrace();
@@ -210,7 +215,7 @@ public class Numeritos {
       pstmt.setString(5, manga.getParodia());
       pstmt.setString(6, manga.getPersonaje());
       pstmt.setString(7, manga.getTitulo());
-      pstmt.setFloat(8, manga.getExp());
+      pstmt.setDouble(8, manga.getExp());
       pstmt.setInt(9, manga.getMedia());
       pstmt.executeUpdate();
     } catch (SQLException e) {
