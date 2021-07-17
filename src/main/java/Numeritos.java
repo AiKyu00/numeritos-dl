@@ -20,7 +20,8 @@ public class Numeritos {
   public void connect() {
     try {
       // db parameters
-      String url = "jdbc:sqlite:C:/Users/Sergio Malagon/Documents/numeritos.db";
+      //String url = "jdbc:sqlite:C:/Users/Sergio Malagon/Documents/numeritos.db";
+      String url = "jdbc:sqlite:D:/Numeritos/numeritos/db/numeritos.db";
       // create a connection to the database
       conn = DriverManager.getConnection(url);
 
