@@ -1,4 +1,3 @@
-import netscape.javascript.JSObject;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -7,22 +6,17 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Types;
-import java.util.Arrays;
-import java.util.Optional;
+import java.sql.*;
 import java.util.Scanner;
 
 public class Numeritos {
 
 
     private int lineasNuevas = 0;
+    private Connection conn = null;
 
 
     public void connect() {
-        Connection conn = null;
         try {
             // db parameters
             String url = "jdbc:sqlite:C:/Users/Sergio Malagon/Documents/numeritos.db";
@@ -33,27 +27,30 @@ public class Numeritos {
 
         } catch (SQLException e) {
             System.out.println(e.getMessage());
-        } finally {
-            try {
-                if (conn != null) {
-                    conn.close();
-                }
-            } catch (SQLException ex) {
-                System.out.println(ex.getMessage());
-            }
         }
     }
+
+    public void close(){
+        try{
+            this.conn.close();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+    }
+
 
     public boolean obtainLineas(String routa) {
         BufferedReader reader;
         try {
             reader = new BufferedReader(new FileReader(routa));
             String line = reader.readLine();
+            this.connect();
             while (line != null) {
                 insert(hMetadata(line.trim()));
                 line = reader.readLine();
             }
             reader.close();
+            this.close();
         } catch (IOException e) {
             e.printStackTrace();
             return false;
@@ -143,9 +140,9 @@ public class Numeritos {
                 salida.setTitulo(object.getJSONObject("title").getString("pretty"));
 
                 //Obtengo la experiancia
+                salida.setExp(1.11F);
 
-
-                //Obtengo la media_id
+                //Obtengo el media_id
                 salida.setMedia(Integer.parseInt(object.getString("media_id")));
 
                 System.out.println(salida.toString());
@@ -159,11 +156,24 @@ public class Numeritos {
     }
 
 
-    public void  insert(Manga manga) {
+    public void insert(Manga manga) {
+        String sql = "INSERT INTO Numeritos(id,autor,paginas,tags,parodia,personaje,titulo,exp,media) VALUES(?,?,?,?,?,?,?,?,?)";
+        try {
+            PreparedStatement pstmt = this.conn.prepareStatement(sql);
+            pstmt.setInt(1, manga.getId());
+            pstmt.setString(2, manga.getAutor());
+            pstmt.setInt(3, manga.getPaginas());
+            pstmt.setString(4, manga.getTags());
+            pstmt.setString(5, manga.getParodia());
+            pstmt.setString(6, manga.getPersonaje());
+            pstmt.setString(7, manga.getTitulo());
+            pstmt.setFloat(8, manga.getExp());
+            pstmt.setInt(9, manga.getMedia());
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
         lineasNuevas++;
-
-
-
     }
 
     public int getLineasNuevas() {

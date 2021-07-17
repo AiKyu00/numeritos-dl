@@ -58,7 +58,7 @@ public class Interfaz extends JFrame {
 
     public void showAlert(int alertas) {
         JOptionPane.showMessageDialog(this,
-                "Se han insertado " + alertas + " nuevas entrasdas a la base [basado]",
+                "Se han insertado " + alertas + " nuevas entradas a la base [basado]",
                 "Operacion finalizada.",
                 JOptionPane.PLAIN_MESSAGE);
     }
